@@ -1,32 +1,143 @@
-# Prerequisites
-*.d
+# include <iostream>
+# include <chrono>
+# include <cstdlib>
+# include <string>
+using namespace std;
+/*camparisons_number is the number of if statements
+or camparisons statements in sequential or binary search function*/
+int comparisons_number1 = 0, comparisons_number2 = 0;
+// binary search function
+int binary_search(int arr[], int array_size, int searched_value)
+{
+	int low = 0, high = array_size - 1;
+	while (low <= high)
+	{
+		int mid = (high + low) / 2;
+		comparisons_number1++;
+		if (arr[mid] == searched_value)
+		{
+			return mid;
+		}
+		else if (arr[mid] > searched_value)
+		{
+			high = mid - 1;
+			comparisons_number1++;
+		}
+		else
+			low = mid + 1;
+		comparisons_number1++;
+	}
+	return -1;
+	// the value -1 means that user's value not exist in the array 
+}
+// sequential search function
+int sequential_search(int arr[], int array_size, int searched_value)
+{
+	for (int i = 0;i < array_size;i++)
+	{
+		comparisons_number2++;
+		if (arr[i] == searched_value)
+		{
+			return i;
+		}
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+	}
+	return -1;
+	// the value -1 means that user's value not exist in the array
+}
+int main()
+{
+	int* array = new int[1000000];
+	string ask_user, askuser;
+	for (int i = 0;i < 1000000;i++)
+	{
+		array[i] = i;
+	}
+	int user_value;
+	cout << "please inter your integer !: ";
+	cin >> user_value;
+	cout << endl;
+	cout << "wanna to do the best search for your integer?\t";
+	cin >> ask_user;
+	cout << endl;
+	if (ask_user == "yes")
+	{
+		if (user_value < 19) // as binary search would take 20 steps to go through the entire array. [log2(1000000)+1=20.9]
+		{
+			cout << "it's preferred to do sequential search\n\n";
+			//sequential search
+			auto start2 = chrono::steady_clock::now();
+			int result2 = sequential_search(array, 1000000, user_value);
+			if (result2 == -1)
+				cout << "the integer " << user_value << " does not exist in the array\n\n";
+			else
+				cout << "the integer " << user_value << " exist in the array with index " << result2 << endl << endl;
+			auto end2 = chrono::steady_clock::now();
+			cout << "the time needed to perform sequential search is " <<
+				float(chrono::duration_cast<chrono::microseconds>(end2 - start2).count()) << " microseconds " << endl << endl
+				<< "the space taken in memory by sequential search = " << 16 << endl << endl
+				// it has costant value "16" because sequential search function has 4 int with 16 bytes
+				<< "number of camparison need to the sequential search for this integer = "
+				<< comparisons_number2 << endl << endl;
+		}
+		else
+		{
+			cout << "it's preferred to do binary search\n\n";
+			//binary search
+			auto start1 = chrono::steady_clock::now();
+			int result1 = binary_search(array, 1000000, user_value);
+			if (result1 == -1)
+				cout << "the integer " << user_value << " does not exist in the array\n\n";
+			else
+				cout << "the integer " << user_value << " exist in the array with index " << result1 << endl << endl;
+			auto end1 = chrono::steady_clock::now();
+			cout << "the time taken to perform binary search is " <<
+				float(chrono::duration_cast<chrono::microseconds>(end1 - start1).count()) << " microseconds " << endl << endl
+				<< "the space taken in memory by binary search = " << 24 << endl << endl
+				// it has costant value "24" because binary search function has 6 int with 24 bytes
+				<< "number of camparison need to the binary search for this integer = "
+				<< comparisons_number1 << endl << endl;
+		}
+	}
+	else if (ask_user == "no")
+	{
+		cout << "wanna to do binary and sequential search together?\t";
+		cin >> askuser;
+		cout << endl;
+		if (askuser == "yes")
+		{
+			//binary search
+			auto start1 = chrono::steady_clock::now();
+			int result1 = binary_search(array, 1000000, user_value);
+			if (result1 == -1)
+				cout << "the integer " << user_value << " does not exist in the array\n\n";
+			else
+				cout << "the integer " << user_value << " exist in the array with index " << result1 << endl << endl;
+			auto end1 = chrono::steady_clock::now();
+			cout << "the time taken to perform binary search is " <<
+				float(chrono::duration_cast<chrono::microseconds>(end1 - start1).count()) << " microseconds " << endl << endl
+				<< "the space taken in memory by binary search = " << 24 << endl << endl
+				// it has costant value "24" because binary search function has 6 int with 24 bytes
+				<< "number of camparison need to the binary search for this integer = "
+				<< comparisons_number1 << endl << endl;
+			//sequential search
+			auto start2 = chrono::steady_clock::now();
+			int result2 = sequential_search(array, 1000000, user_value);
+			if (result2 == -1)
+				cout << "the integer " << user_value << " does not exist in the array\n\n";
+			else
+				cout << "the integer " << user_value << " exist in the array with index " << result2 << endl << endl;
+			auto end2 = chrono::steady_clock::now();
+			cout << "the time taken to perform sequential search is " <<
+				float(chrono::duration_cast<chrono::microseconds>(end2 - start2).count()) << " microseconds " << endl << endl
+				<< "the space taken in memory by sequential search = " << 16 << endl << endl
+				// it has costant value "16" because sequential search function has 4 int with 16 bytes
+				<< "number of camparison need to the sequential search for this integer = "
+				<< comparisons_number2 << endl << endl;
+		}
+	}
+	else
+		cout << "please enter \"yes\" \"no\" \n\n";
+	return 0;
+	delete[]array;
+}
